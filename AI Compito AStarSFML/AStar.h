@@ -9,6 +9,8 @@ class AStar
 {
 public:
 
+	AStar();
+
 	static int getXMax();
 
 	static int getYMax();
@@ -16,6 +18,8 @@ public:
 	sf::Color getNodeColor(int x, int y) const;
 
 	bool SearchFinished() const;
+
+	void SetBlockMap(bool* map);
 
 	void Init();
 
@@ -29,6 +33,7 @@ private:
     const static int iStartNode = 0;
     const static int iEndNode = 99;
     
+	void CleanBlockMap();
     void CreateGraph();
     void CreateGraphAdjs();
     void CreateNodeAdj(const int iRow, const int iCol);
@@ -42,6 +47,8 @@ private:
     void PrintPath(Node* pNode) const;
     
     Node* tRoot[xMax * yMax];
+
+	bool bBlockMap[xMax * yMax];
     
     std::list<Node*> qOpenList;
 };

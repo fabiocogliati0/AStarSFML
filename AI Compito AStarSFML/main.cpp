@@ -20,13 +20,63 @@ int main()
 {
 
 	AStar algorithm;
-	algorithm.Init();
 
 	sf::RenderWindow window(sf::VideoMode(iWindowSizeX, iWindowSizeY), "AStar");
 	window.setFramerateLimit(60);
 
 	int numX = algorithm.getXMax();
 	int numY = algorithm.getYMax();
+
+	//Creates Blocks
+	bool* blockMap = new bool[numX * numY];
+	for (int i = 0; i < numX*numY; ++i)
+	{
+		blockMap[i] = false;
+	}
+
+	//muro a riga 1
+	blockMap[0 * numY + 1] = true;
+	blockMap[2 * numY + 1] = true;
+	blockMap[3 * numY + 1] = true;
+	blockMap[4 * numY + 1] = true;
+	blockMap[5 * numY + 1] = true;
+	blockMap[6 * numY + 1] = true;
+	blockMap[7 * numY + 1] = true;
+	blockMap[8 * numY + 1] = true;
+	blockMap[9 * numY + 1] = true;
+
+	//muro a riga 3
+	blockMap[1 * numY + 3] = true;
+	blockMap[2 * numY + 3] = true;
+	blockMap[3 * numY + 3] = true;
+	blockMap[4 * numY + 3] = true;
+	blockMap[5 * numY + 3] = true;
+	blockMap[6 * numY + 3] = true;
+	blockMap[7 * numY + 3] = true;
+	blockMap[8 * numY + 3] = true;
+	blockMap[9 * numY + 3] = true;
+
+	//muro a colonna 1
+	blockMap[1 * numY + 4] = true;
+	blockMap[1 * numY + 5] = true;
+	blockMap[1 * numY + 6] = true;
+
+	//muro a colonna 5
+	blockMap[5 * numY + 9] = true;
+	blockMap[5 * numY + 8] = true;
+	blockMap[5 * numY + 7] = true;
+	blockMap[5 * numY + 6] = true;
+
+	//blocco quadrato
+	blockMap[6 * numY + 7] = true;
+	blockMap[6 * numY + 6] = true;
+	blockMap[7 * numY + 7] = true;
+	blockMap[7 * numY + 6] = true;
+
+	algorithm.SetBlockMap(blockMap);
+
+	//init
+	algorithm.Init();
 
 	sf::RectangleShape* rectancles = new sf::RectangleShape[numX*numY];
 

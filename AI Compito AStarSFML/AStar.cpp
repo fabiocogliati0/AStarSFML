@@ -5,6 +5,11 @@
 
 //PUBLICS
 
+AStar::AStar()
+{
+	CleanBlockMap();
+}
+
 int AStar::getXMax()
 {
 	return xMax;
@@ -23,15 +28,15 @@ sf::Color AStar::getNodeColor(int x, int y) const
 	case Unknown:
 		return sf::Color::Black;
 	case Open:
-		return sf::Color::Blue;
-	case Closed:
-		return sf::Color::Red;
-	case Path:
-		return sf::Color::Magenta;
-	case Block:
-		return sf::Color::White;
-	default:
 		return sf::Color::Green;
+	case Closed:
+		return sf::Color::Blue;
+	case Path:
+		return sf::Color::Yellow;
+	case Block:
+		return sf::Color::Red;
+	default:
+		return sf::Color::White;
 	}
 }
 
@@ -40,8 +45,17 @@ bool AStar::SearchFinished() const
 	return qOpenList.empty();
 }
 
+void AStar::SetBlockMap(bool* map)
+{
+	for (int i = 0; i < xMax*yMax; ++i)
+	{
+		bBlockMap[i] = map[i];
+	}
+}
+
 void AStar::Init()
 {
+
 	CreateGraph();
 
 	CreateGraphAdjs();
@@ -82,6 +96,14 @@ void AStar::Clean()
 
 //PRIVATES
 
+void AStar::CleanBlockMap()
+{
+	for (int i = 0; i < xMax*yMax; ++i)
+	{
+		bBlockMap[i] = false;
+	}
+}
+
 void AStar::CreateGraph()
 {
     std::cout << "Creating Nodes...\n";
@@ -90,7 +112,7 @@ void AStar::CreateGraph()
         std::cout << "  ";
         for (int iCol = 0; iCol < yMax; ++iCol)
         {
-            tRoot[(iRow*yMax) + iCol] = new Node(iRow, iCol);
+			tRoot[(iRow*yMax) + iCol] = new Node(iRow, iCol, bBlockMap[(iRow*yMax) + iCol]);
             std::cout << "(" << iRow << "," << iCol << ") - ";
         }
         std::cout << "\n";
@@ -133,9 +155,11 @@ void AStar::CreateNodeAdj(const int iRow, const int iCol)
             
             if (iNodeCol < 0 || iNodeCol >= yMax)
                 continue;
-            
-            tRoot[iNode]->lAdj.push_back(tRoot[(iNodeRow * yMax) + iNodeCol]);
-            std::cout << "(" << iNodeRow <<", " << iNodeCol << ") - ";
+			if (!bBlockMap[(iNodeRow * yMax) + iNodeCol])
+			{
+				tRoot[iNode]->lAdj.push_back(tRoot[(iNodeRow * yMax) + iNodeCol]);
+				std::cout << "(" << iNodeRow << ", " << iNodeCol << ") - ";
+			}
         }
     }
     std::cout << "\n  Creating Node Adj (" << iRow <<", " << iCol << ") ...DONE\n\n";

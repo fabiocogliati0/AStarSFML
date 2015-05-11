@@ -8,3 +8,15 @@ Node::Node(const int x, const int y) : eState(NodeState::Unknown),
     aiCoord[0] = x;
     aiCoord[1] = y;
 }
+
+Node::Node(const int x, const int y, bool isBlock) : Node(x,y)
+{
+	if (isBlock)
+	{
+		eState = NodeState::Block;
+	}
+	else
+	{
+		eState = NodeState::Unknown;
+	}
+}
