@@ -1,11 +1,10 @@
-#ifndef AStar_NodeState_h
-#define AStar_NodeState_h
+#pragma once
 
 enum NodeState
 {
     Unknown,
     Open,
-    Closed
+    Closed,
+	Path,
+	Block
 };
-
-#endif

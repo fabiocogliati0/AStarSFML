@@ -1,5 +1,4 @@
-#ifndef __AStar__Node__
-#define __AStar__Node__
+#pragma once
 
 #include <list>
 #include "NodeState.h"
@@ -28,5 +27,3 @@ public:
 private:
     int                 aiCoord[2];
 };
-
-#endif /* defined(__AStar__Node__) */

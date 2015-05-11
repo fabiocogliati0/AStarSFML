@@ -3,18 +3,84 @@
 
 #include "AStar.h"
 
-void AStar::Run()
+//PUBLICS
+
+int AStar::getXMax()
 {
-    CreateGraph();
-    
-    CreateGraphAdjs();
-    
-    ComputeGraphHeuristics();
-    
-    Search();
-    
-    Clean();
+	return xMax;
 }
+
+int AStar::getYMax()
+{
+	return yMax;
+}
+
+sf::Color AStar::getNodeColor(int x, int y) const
+{
+	NodeState& state = tRoot[x * yMax + y]->eState;
+	switch (state)
+	{
+	case Unknown:
+		return sf::Color::Black;
+	case Open:
+		return sf::Color::Blue;
+	case Closed:
+		return sf::Color::Red;
+	case Path:
+		return sf::Color::Magenta;
+	case Block:
+		return sf::Color::White;
+	default:
+		return sf::Color::Green;
+	}
+}
+
+bool AStar::SearchFinished() const
+{
+	return qOpenList.empty();
+}
+
+void AStar::Init()
+{
+	CreateGraph();
+
+	CreateGraphAdjs();
+
+	ComputeGraphHeuristics();
+
+	AddNodeToOpenList(NULL, tRoot[iStartNode]);
+}
+
+void AStar::Update()
+{
+	Node* pCurrentNode = NULL;
+	pCurrentNode = VisitNode();
+
+	if (pCurrentNode == tRoot[iEndNode])
+	{
+		PrintPath(pCurrentNode);
+		qOpenList.clear();
+	}
+}
+
+void AStar::Clean()
+{
+	std::cout << "Deleting Nodes...\n";
+	for (int iRow = 0; iRow < xMax; ++iRow)
+	{
+		std::cout << "  ";
+		for (int iCol = 0; iCol < yMax; ++iCol)
+		{
+			delete tRoot[(iRow * yMax) + iCol];
+			std::cout << "(" << iRow << "," << iCol << ") - ";
+		}
+		std::cout << "\n";
+	}
+	std::cout << "Deleting Nodes...\n\n";
+}
+
+
+//PRIVATES
 
 void AStar::CreateGraph()
 {
@@ -89,39 +155,6 @@ void AStar::ComputeGraphHeuristics()
 void AStar::ComputeNodeHeuristic(Node* pNode)
 {
     pNode->iH = std::abs(pNode->X() - tRoot[iEndNode]->X()) + std::abs(pNode->Y() - tRoot[iEndNode]->Y());
-}
-
-void AStar::Clean()
-{
-    std::cout << "Deleting Nodes...\n";
-    for (int iRow = 0; iRow < xMax; ++iRow)
-    {
-        std::cout << "  ";
-        for (int iCol = 0; iCol < yMax; ++iCol)
-        {
-            delete tRoot[(iRow * yMax) + iCol];
-            std::cout << "(" << iRow << "," << iCol << ") - ";
-        }
-        std::cout << "\n";
-    }
-    std::cout << "Deleting Nodes...\n\n";
-}
-
-void AStar::Search()
-{
-    AddNodeToOpenList(NULL, tRoot[iStartNode]);
-    Node* pCurrentNode = NULL;
-     
-    while(!qOpenList.empty())
-    {
-        pCurrentNode = VisitNode();
-        
-        if (pCurrentNode == tRoot[iEndNode])
-        {
-            PrintPath(pCurrentNode);
-            break;
-        }
-    }
 }
 
 Node* AStar::VisitNode()
@@ -227,6 +260,7 @@ void AStar::PrintPath(Node* pNode) const
     for (std::list<Node*>::iterator iter = lPath.begin(); iter != iEnd; ++iter)
     {
         std::cout << "(" << (*iter)->X() << "," << (*iter)->Y() << ")";
+		(*iter)->eState = Path;
     }
     
     std::cout << "\n\n\n";

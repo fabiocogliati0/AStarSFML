@@ -1,6 +1,6 @@
-#ifndef __AStar__AStar__
-#define __AStar__AStar__
+#pragma once
 
+#include <SFML\Graphics.hpp>
 #include <iostream>
 #include <list>
 #include "Node.h"
@@ -8,8 +8,21 @@
 class AStar
 {
 public:
-    void Run();
-    
+
+	static int getXMax();
+
+	static int getYMax();
+
+	sf::Color getNodeColor(int x, int y) const;
+
+	bool SearchFinished() const;
+
+	void Init();
+
+	void Update();
+
+	void Clean();
+
 private:
     const static int xMax = 10;
     const static int yMax = 10;
@@ -22,10 +35,7 @@ private:
     
     void ComputeGraphHeuristics();
     void ComputeNodeHeuristic(Node* pNode);
-    
-    void Clean();
-    
-    void Search();
+   
     Node* VisitNode();
     void AddNodeToOpenList(Node* pParent, Node* pNode);
     
@@ -35,5 +45,3 @@ private:
     
     std::list<Node*> qOpenList;
 };
-
-#endif /* defined(__AStar__AStar__) */
