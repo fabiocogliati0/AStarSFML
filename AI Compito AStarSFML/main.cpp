@@ -186,6 +186,8 @@ int main()
 	}
 
 	algorithm.Clean();
+	delete[] rectangles;
+	rectangles = nullptr;
 
 	return 0;
 }
