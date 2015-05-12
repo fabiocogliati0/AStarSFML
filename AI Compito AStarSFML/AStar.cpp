@@ -20,24 +20,13 @@ int AStar::getYMax()
 	return yMax;
 }
 
-sf::Color AStar::getNodeColor(int x, int y) const
+NodeState AStar::getNodeState(int x, int y) const
 {
-	NodeState& state = tRoot[x * yMax + y]->eState;
-	switch (state)
-	{
-	case Unknown:
-		return sf::Color::Black;
-	case Open:
-		return sf::Color::Green;
-	case Closed:
-		return sf::Color::Blue;
-	case Path:
-		return sf::Color::Yellow;
-	case Block:
-		return sf::Color::Red;
-	default:
-		return sf::Color::White;
-	}
+	const int pos = x * yMax + y;
+
+	if (pos == iStartNode) return Start;
+	else if (pos == iEndNode) return End;
+	else return tRoot[pos]->eState;
 }
 
 bool AStar::SearchFinished() const

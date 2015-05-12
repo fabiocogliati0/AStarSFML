@@ -2,9 +2,11 @@
 
 enum NodeState
 {
-    Unknown,
-    Open,
-    Closed,
+	Unknown,
+	Open,
+	Closed,
 	Path,
-	Block
+	Block,
+	Start,
+	End
 };

@@ -5,28 +5,11 @@
 
 const int iWindowSizeX = 600;
 const int iWindowSizeY = 600;
+sf::RectangleShape* rectangles;
 
 
-void update(AStar& algorithm)
+void createBlocksNodes(const int numX, const int numY, AStar& algorithm)
 {
-	if (!algorithm.SearchFinished())
-	{
-		algorithm.Update();
-	}
-
-}
-
-int main()
-{
-
-	AStar algorithm;
-
-	sf::RenderWindow window(sf::VideoMode(iWindowSizeX, iWindowSizeY), "AStar");
-	window.setFramerateLimit(60);
-
-	int numX = algorithm.getXMax();
-	int numY = algorithm.getYMax();
-
 	//Creates Blocks
 	bool* blockMap = new bool[numX * numY];
 	for (int i = 0; i < numX*numY; ++i)
@@ -36,13 +19,13 @@ int main()
 
 	//muro a riga 1
 	blockMap[0 * numY + 1] = true;
+	blockMap[1 * numY + 1] = true;
 	blockMap[2 * numY + 1] = true;
 	blockMap[3 * numY + 1] = true;
 	blockMap[4 * numY + 1] = true;
 	blockMap[5 * numY + 1] = true;
 	blockMap[6 * numY + 1] = true;
 	blockMap[7 * numY + 1] = true;
-	blockMap[8 * numY + 1] = true;
 	blockMap[9 * numY + 1] = true;
 
 	//muro a riga 3
@@ -74,13 +57,22 @@ int main()
 	blockMap[7 * numY + 6] = true;
 
 	algorithm.SetBlockMap(blockMap);
+}
 
-	//init
-	algorithm.Init();
+void update(AStar& algorithm)
+{
+	if (!algorithm.SearchFinished())
+	{
+		algorithm.Update();
+	}
 
-	sf::RectangleShape* rectancles = new sf::RectangleShape[numX*numY];
+}
 
-	sf::Vector2f quadSize(static_cast<float>(iWindowSizeX) / numX, static_cast<float>(iWindowSizeY) / numY);;
+void createRectangles(const int numX, const int numY)
+{
+	rectangles = new sf::RectangleShape[numX*numY];
+
+	sf::Vector2f quadSize(static_cast<float>(iWindowSizeX) / numX, static_cast<float>(iWindowSizeY) / numY);
 
 	for (int i = 0; i < numX; ++i)
 	{
@@ -88,13 +80,91 @@ int main()
 		{
 			const int pos = i*numY + j;
 			sf::Vector2f position(i*quadSize.x, j*quadSize.y);
-			rectancles[pos] = sf::RectangleShape(quadSize);
-			rectancles[pos].setPosition(position);
-			rectancles[pos].setOutlineColor(sf::Color::White);
-			rectancles[pos].setOutlineThickness(1.0f);
+			rectangles[pos] = sf::RectangleShape(quadSize);
+			rectangles[pos].setPosition(position);
+			rectangles[pos].setOutlineColor(sf::Color::White);
+			rectangles[pos].setOutlineThickness(1.0f);
 
 		}
 	}
+}
+
+sf::Color getNodeColor(const NodeState& state)
+{
+	switch (state)
+	{
+	case Start:
+		return sf::Color::Cyan;
+	case End:
+		return sf::Color::Magenta;
+	case Open:
+		return sf::Color::Green;
+	case Closed:
+		return sf::Color::Blue;
+	case Block:
+		return sf::Color::Red;
+	default:
+		return sf::Color::Black;
+	}
+}
+
+sf::Color getPathNodeColor(const NodeState& state)
+{
+	switch (state)
+	{
+	case Start:
+		return sf::Color::Yellow;
+	case End:
+		return sf::Color::Yellow;
+	case Path:
+		return sf::Color::Yellow;
+	case Block:
+		return sf::Color::Red;
+	default:
+		return sf::Color::Black;
+	}
+}
+
+void drawRectangles(const int numX, const int numY, AStar& algorithm, sf::RenderWindow& window, bool lastDraw)
+{
+	for (int i = 0; i < numX; ++i)
+	{
+		for (int j = 0; j < numY; ++j)
+		{
+			sf::Color fillColor;
+			NodeState nodeState = algorithm.getNodeState(i, j);
+
+			if (lastDraw)
+			{
+				fillColor = getPathNodeColor(nodeState);
+			}
+			else
+			{
+				fillColor = getNodeColor(nodeState);
+			}
+
+			rectangles[i*numY + j].setFillColor(fillColor);
+
+			window.draw(rectangles[i*numY + j]);
+		}
+	}
+}
+
+
+int main()
+{
+
+	sf::RenderWindow window(sf::VideoMode(iWindowSizeX, iWindowSizeY), "AStar");
+	window.setFramerateLimit(60);
+
+	AStar algorithm;
+
+	const int numX = algorithm.getXMax();
+	const int numY = algorithm.getYMax();
+	
+	createBlocksNodes(numX, numY, algorithm);
+	algorithm.Init();
+	createRectangles(numX,numY);
 
 	while (window.isOpen())
 	{
@@ -109,14 +179,7 @@ int main()
 
 		window.clear();
 
-		for (int i = 0; i < numX; ++i)
-		{
-			for (int j = 0; j < numY; ++j)
-			{
-				rectancles[i*numY + j].setFillColor(algorithm.getNodeColor(i, j));
-				window.draw(rectancles[i*numY + j]);
-			}
-		}
+		drawRectangles(numX, numY, algorithm, window, algorithm.SearchFinished());
 
 		window.display();
 
