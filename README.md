@@ -1,6 +1,7 @@
 Dentro l'applicazione premere il tasto N per far avanzare l'algoritmo A*
 
----------------Legenda Colori:------------------------------
+
+---------------Legenda Colori---------------------
 
 Nero: Non visitato
 
@@ -12,3 +13,6 @@ Giallo: Nodo che fa parte del path finale
 
 Rosso: Nodo non calpestabile
 
+Ciano: Nodo di partenza
+
+Magenta: Nodo di arrivo
